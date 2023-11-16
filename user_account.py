@@ -1,4 +1,3 @@
-
 import sqlite3
 import hashlib
 
@@ -6,13 +5,12 @@ import hashlib
 conn = sqlite3.connect('accounts.db')
 cursor = conn.cursor()
 #create users table
-conn.execute('CREATE TABLE USERS (Username, TEXT, Password TEXT)')
+conn.execute('CREATE TABLE USERS (Username TEXT, Password TEXT, Current_Weight INT, Curr_Height INT)')
 
 
-def create_user(user, password):
+def create_user(user, password, weight, height ):
     hashed_pass = hashlib.sha256(password.encode()).hexdigest()
     #insert try except finally
-    cursor.execute('INSERT INTO USERS (Username, Password) VALUES (?, ?)', (user, hashed_pass))
+    cursor.execute('INSERT INTO USERS (Username, Password, Current_Weight, Current_Height) VALUES (?, ?, ?, ?)', (user, hashed_pass, weight, height))
     conn.commit()
     conn.close()
-
