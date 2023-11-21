@@ -1,4 +1,5 @@
 import sqlite3
+from password_hashing import hash_password
 
 def create_connection(db_file):
     """Create a database connection to the SQLite database."""
@@ -27,6 +28,7 @@ def register(conn):
     """Register a new user."""
     username = input("Choose a username: ")
     password = input("Choose a password: ")
+    hashed_password = hash_password(password)
     name = input("Enter your name: ")
     age = input("Enter your age: ")
     height = input("Enter your height: ")
@@ -34,7 +36,7 @@ def register(conn):
     try:
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (username, password, name, age, height) VALUES (?, ?, ?, ?, ?)",
-                       (username, password, name, age, height))
+                       (username, hashed_password, name, age, height))
         conn.commit()
         print(f"User {username} registered successfully!")
     except sqlite3.IntegrityError:
@@ -44,10 +46,11 @@ def login(conn):
     """Log in an existing user."""
     username = input("Enter your username: ")
     password = input("Enter your password: ")
+    hashed_password = hash_password(password)
 
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, hashed_password))
         user = cursor.fetchone()
         if user:
             print(f"Welcome back {user[2]}!")  # user[2] is the name field
