@@ -11,8 +11,8 @@ import json
 RECIPE_API_ID = "b962138b"
 RECIPE_API_KEY = "7571a72dbf7b452b2f32bd26bc3efccc"
 
+# class for using the Edamam Recipe Search API
 class RecipeAPI:
-
     def __init__(self):
         self.recipeAppId = RECIPE_API_ID
         self.recipeAppKey = RECIPE_API_KEY
@@ -21,15 +21,18 @@ class RecipeAPI:
         url = 'https://api.edamam.com/search?q=' + query + '&app_id=' \
             + self.recipeAppId + '&app_key=' + self.recipeAppKey
 
+        # retrieves search results and converts from json
         results = (requests.get(url)).json()
 
-        hits = results["hits"]
+        # search results are stored as a dict
+        hits = results["hits"]                          # "hits" are the recipes found in search
         for hit in hits:
             results = hit["recipe"]
-            results["yields"] = results["yield"]
+            results["yields"] = results["yield"]        # "yield" is a keyword in Python, so it must be changed to "yields" for storage
             results.pop("yield")
-            yield Recipe(**results)
+            yield Recipe(**results)                     # creates and returns Recipe object for each search result
 
+# class for storing an individual ingredient found within a recipe, with all the attributes Edamam provides
 class Ingredient:
     def __init__(self,
                  text=None,
@@ -52,6 +55,7 @@ class Ingredient:
     def __repr__(self):
         return self.text
 
+# class for storing an individual nutrient found within a recipe, with all the attributes Edamam provides
 class Nutrient:
     def __init__(self, tag, label=None, quantity=0, unit=None):
         self.tag = tag
@@ -69,6 +73,7 @@ class Nutrient:
                                                  quanitity=self.quantity)
         return name
 
+# class for storing an individual recipe, with all the attributes Edamam provides
 class Recipe:
     def __init__(self,
                  label,
@@ -92,28 +97,28 @@ class Recipe:
                  cuisineType=None,
                  mealType=None,
                  dishType=None):
-        self.ingredientLines = ingredientLines or []
-        self.ingredients = []
+        self.ingredientLines = ingredientLines or []        # simple ingredient text
+        self.ingredients = []                               # complex ingredient object
         if isinstance(ingredients, list):
-            for i in ingredients:
+            for i in ingredients:                           # copies list of ingredient dicts to list of Ingredient objects
                 ing = Ingredient(**i)
                 self.ingredients.append(ing)
         else:
             self.ingredient = ingredients or []
-        self.cuisineType = cuisineType or []
-        self.mealType = mealType or []
-        self.dishType = dishType or []
-        self.label = label
-        self.dietLabels = dietLabels or []
-        self.healthLabels = healthLabels or []
+        self.cuisineType = cuisineType or []                # dish regional origin or inspiration
+        self.mealType = mealType or []                      # breakfast/lunch/dinner
+        self.dishType = dishType or []                      # main course/starter/etc.
+        self.label = label                                  # recipe title
+        self.dietLabels = dietLabels or []                  # diets that fit this recipe
+        self.healthLabels = healthLabels or []              # dietary restrictions satisfied by recipe (e.g. "Peanut-Free")
         self.uri = uri
-        self.url = url or self.uri
-        self.shareAs = shareAs or self.url
-        self.yields = yields
-        self.cautions = cautions
+        self.url = url or self.uri                          # url to original recipe
+        self.shareAs = shareAs or self.url                  # url to recipe on Edamam
+        self.yields = yields                                # number of servings
+        self.cautions = cautions                            # hidden allergen warnings
         self.totalDaily = []
         if isinstance(totalDaily, dict):
-            for n in totalDaily:
+            for n in totalDaily:                            # copies nutrient daily values to list of Nutrient objects
                 nut = Nutrient(n, **totalDaily[n])
                 self.totalDaily.append(nut)
         else:
@@ -123,7 +128,7 @@ class Recipe:
         self.totalTime = totalTime
         self.totalNutrients = []
         if isinstance(totalNutrients, dict):
-            for n in totalNutrients:
+            for n in totalNutrients:                        # copies nutrient total amounts to list of Nutrient objects
                 nut = Nutrient(n, **totalNutrients[n])
                 self.totalNutrients.append(nut)
         else:
@@ -139,10 +144,11 @@ class Recipe:
     def __str__(self):
         return self.label
 
+#TESTING
 #if __name__ == "__main__":
 #    e = RecipeAPI()
     
-#    for recipe in e.recipe_search("Low-Carb"):
+#    for recipe in e.recipe_search("Chicken"):
 #        print("\n")
 #        print(recipe)
 #        print("Total calories: ", recipe.calories)
