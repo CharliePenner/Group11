@@ -145,17 +145,17 @@ class Recipe:
         return self.label
 
 #TESTING
-#if __name__ == "__main__":
-#    e = RecipeAPI()
-    
-#    for recipe in e.recipe_search("Chicken"):
-#        print("\n")
-#        print(recipe)
-#        print("Total calories: ", recipe.calories)
-#        print(recipe.url)
-#        print("Ingredients:")
-#        for i in recipe.ingredients:
-#            print(i)
-#        print("Nutrients (Total):")
-#        for n in recipe.totalNutrients:
-#            print(n)
+if __name__ == "__main__":
+    e = RecipeAPI()
+    query = input("Recipe Search: ")
+    for recipe in e.recipe_search(query):
+        print("\n")
+        print(recipe)
+        print("Total calories: ", recipe.calories)
+        print(recipe.url)
+        print("Ingredients:")
+        for i in recipe.ingredients:
+            print("\t", i)
+        print("Nutrients (Total):")
+        for n in recipe.totalNutrients:
+            print("\t", n)
