@@ -28,18 +28,26 @@ class RecipeAPI:
             results = hit["recipe"]
             results["yields"] = results["yield"]
             results.pop("yield")
-            results["ingredient_names"] = results["ingredientLines"]
-            results.pop("ingredientLines")
-            results["share_url"] = results["shareAs"]
-            results.pop("shareAs")
-            yield Recipe(edamam=self, **results)
+            yield Recipe(**results)
 
 class Ingredient:
-    def __init__(self, text=None, quantity=0, measure=None, food=None):
+    def __init__(self,
+                 text=None,
+                 quantity=0,
+                 measure=None,
+                 food=None,
+                 weight=0,
+                 foodCategory=None,
+                 foodId=None,
+                 image=None):
         self.text = text
         self.quantity = quantity
         self.measure = measure
         self.food = food
+        self.weight = weight
+        self.foodCategory = foodCategory
+        self.foodId = foodId
+        self.image = image
 
     def __repr__(self):
         return self.text
@@ -53,11 +61,11 @@ class Nutrient:
 
     def __repr__(self):
         if self.unit:
-            name = "{label} * {quantity} {unit}".format(label=self.label,
+            name = "{label}: {quantity} {unit}".format(label=self.label,
                                                         quantity=self.quantity,
                                                         unit=self.unit)
         else:
-            name = "{quantity} * {label}".format(label=self.label,
+            name = "{label}: {quantity}".format(label=self.label,
                                                  quanitity=self.quantity)
         return name
 
@@ -66,7 +74,7 @@ class Recipe:
                  label,
                  uri="",
                  url="",
-                 share_url="",
+                 shareAs="",
                  image=None,
                  dietLabels=None,
                  healthLabels=None,
@@ -80,16 +88,15 @@ class Recipe:
                  digest=None,
                  ingredients=None,
                  source="edamam",
-                 ingredient_names=None,
-                 edamam=None,
+                 ingredientLines=None,
                  cuisineType=None,
                  mealType=None,
                  dishType=None):
-        self.ingredient_names = ingredient_names or []
+        self.ingredientLines = ingredientLines or []
         self.ingredients = []
         if isinstance(ingredients, list):
             for i in ingredients:
-                ing = Ingredient(i['text'], i['quantity'], i['measure'], i['food'])
+                ing = Ingredient(**i)
                 self.ingredients.append(ing)
         else:
             self.ingredient = ingredients or []
@@ -101,13 +108,14 @@ class Recipe:
         self.healthLabels = healthLabels or []
         self.uri = uri
         self.url = url or self.uri
-        self.share_url = share_url or self.url
+        self.shareAs = shareAs or self.url
         self.yields = yields
         self.cautions = cautions
         self.totalDaily = []
         if isinstance(totalDaily, dict):
             for n in totalDaily:
-                self.totalDaily += [Nutrient(n, **totalDaily[n])]
+                nut = Nutrient(n, **totalDaily[n])
+                self.totalDaily.append(nut)
         else:
             self.totalDaily = totalDaily or []
         self.totalWeight = totalWeight
@@ -116,7 +124,8 @@ class Recipe:
         self.totalNutrients = []
         if isinstance(totalNutrients, dict):
             for n in totalNutrients:
-                self.totalNutrients += [Nutrient(n, **totalNutrients[n])]
+                nut = Nutrient(n, **totalNutrients[n])
+                self.totalNutrients.append(nut)
         else:
             self.totalNutrients = totalNutrients or []
         self.image = image
@@ -126,7 +135,6 @@ class Recipe:
                 self.digest[content["label"]] = content
         else:
             self.digest = digest or {}
-        self.__edamam = edamam or Edamam()
 
     def __str__(self):
         return self.label
@@ -139,8 +147,9 @@ class Recipe:
 #        print(recipe)
 #        print("Total calories: ", recipe.calories)
 #        print(recipe.url)
+#        print("Ingredients:")
 #        for i in recipe.ingredients:
 #            print(i)
-
-
-        
+#        print("Nutrients (Total):")
+#        for n in recipe.totalNutrients:
+#            print(n)
