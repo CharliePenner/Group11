@@ -24,15 +24,9 @@ def create_table(conn):
     except sqlite3.Error as e:
         print(e)
 
-def register(conn):
+def registerUser(conn, username, password, name, age, height):
     """Register a new user."""
-    username = input("Choose a username: ")
-    password = input("Choose a password: ")
     hashed_password = hash_password(password)
-    name = input("Enter your name: ")
-    age = input("Enter your age: ")
-    height = input("Enter your height: ")
-
     try:
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (username, password, name, age, height) VALUES (?, ?, ?, ?, ?)",
@@ -42,25 +36,24 @@ def register(conn):
     except sqlite3.IntegrityError:
         print("Username already exists. Try a different one.")
 
-def login(conn):
+def login(conn, username, hashed_password):
     """Log in an existing user."""
-    username = input("Enter your username: ")
-    password = input("Enter your password: ")
-    hashed_password = hash_password(password)
-
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, hashed_password))
         user = cursor.fetchone()
         if user:
             print(f"Welcome back {user[2]}!")  # user[2] is the name field
+            return True, user
         else:
             print("Invalid username or password")
+            return False, None
     except sqlite3.Error as e:
         print(e)
+        return False, None
 
-def main():
-    """Main function to handle user inputs."""
+'''def main():
+    Main function to handle user inputs.
     database = "users.db"
     conn = create_connection(database)
     if conn is not None:
@@ -75,7 +68,7 @@ def main():
             else:
                 print("Invalid choice. Please type 'login' or 'register'.")
     else:
-        print("Error! Cannot create the database connection.")
+        print("Error! Cannot create the database connection.")'''
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+   #main()"""
