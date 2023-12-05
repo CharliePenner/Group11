@@ -41,7 +41,15 @@ def handle_login_request():
         success, user = login(con, username, hashed_pass)
 
         if success:
-            return render_template("user_page.html", username=user[0], name=user[2])  # Customize as needed
+            if user[0] == 'admin':
+                # Fetch user data for the admin
+                cursor = con.cursor()
+                cursor.execute("SELECT * FROM users")
+                users = cursor.fetchall()
+                #print out all the users
+                return render_template("user_page.html", username=user[0], name=user[2], users = users)
+            else:
+                return render_template("user_page.html", username=user[0], name=user[2])
         else:
             return render_template("login.html", error="Invalid username or password")
               
