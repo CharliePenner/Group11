@@ -9,29 +9,37 @@
     <h1>Welcome, {{ name }}!</h1>
 
     {% if username == 'admin' %}
-    <h2>Users Table</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Height</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
+        <h2>Users Table</h2>
+        <table border="1">
+            <thead>
                 <tr>
-                    <td>{{ user[0] }}</td>
-                    <td>{{ user[2] }}</td>
-                    <td>{{ user[3] }}</td>
-                    <td>{{ user[4] }}</td>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Height</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>{{ user[3] }}</td>
+                        <td>{{ user[4] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3>Enter Ingredient to Search!</h3>
+        <form action="/search" method="post">
+            Ingredient:
+            <input type="text" name="Ingredient"></br>
+            <input type="submit" value="Search">
+        </form>
+    {% endif %}
+
     <p><a href="/">Go Home</a></p>
-{% endif %}
 
 </body>
 </html>
