@@ -1,0 +1,23 @@
+<!-- search_results.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Search Results</title>
+</head>
+<body>
+    <h1>Recipe Search Results</h1>
+    <ul>
+        {% for recipe in recipes %}
+            <li>
+                <strong>{{ recipe.label }}</strong><br>
+                <a href="{{ recipe.url }}">View Recipe</a><br>
+                Total Calories: {{ recipe.calories }}<br>
+                Ingredients: {{ recipe.ingredients|join(', ') }}
+            </li>
+        {% endfor %}
+    </ul>
+    <p><a href="/">Go Home</a></p>
+</body>
+</html>
