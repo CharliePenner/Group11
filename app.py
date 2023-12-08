@@ -89,12 +89,12 @@ def handle_register_request():
     finally:
         con.close()
 
-if __name__ == '__main__':
-    app.run(debug = True)
-
-
 @app.route('/search', methods=['POST'])
 def search_recipes():
     query = request.form['Ingredient']
     recipes = list(recipe_api.recipe_search(query))
     return render_template('search_results.html', recipes=recipes)
+
+if __name__ == '__main__':
+    app.run(debug = True)
+
