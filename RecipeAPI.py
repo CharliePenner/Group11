@@ -40,6 +40,8 @@ class RecipeAPI:
 
         for hit in hits:
             recipe_data = hit["recipe"]
+            recipe_data["yields"] = recipe_data["yield"]
+            recipe_data.pop("yield")
             filtered_data = filter_recipe_keys(recipe_data, allowed_keys)
             yield Recipe(**filtered_data)
 
