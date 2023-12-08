@@ -86,6 +86,35 @@ def handle_register_request():
     finally:
         con.close()
 
+@app.route('/addRecipe', methods=['GET', 'POST'])
+def addRecipe():
+    return render_template('add_recipe.html')
+
+"""def handle_add_recipe_request():
+    con = create_connection(database)
+
+    try:
+        recipe_name = request.form['Recipe Name']
+        recipe_ingredients = request.form['Recipe Ingredients'].splitlines()
+        recipe_servings = request.form['Servings']
+        recipe_calories = request.form["Calories"]
+        recipe_protein = request.form["Protein"]
+        recipe_fat = request.form["Fat"]
+        recipe_carbs = request.form["Carbs"]
+
+        cursor = con.cursor()
+        cursor.execute("INSERT INTO recipes (recipe_name, recipe_ingredients, recipe_instructions) VALUES (?, ?, ?, ?)",
+                       (recipe_name, recipe_ingredients, recipe_instructions))
+        con.commit()
+        print(f"Recipe {recipe_name} added successfully!")
+        return render_template('user_page.html')
+    except Exception as e:  
+        print(f"Error: {str(e)}")
+        con.rollback()
+        return render_template("add_recipe.html", error="An error occurred during recipe addition")
+    finally:
+        con.close()"""
+
 if __name__ == '__main__':
     app.run(debug = True)
 
