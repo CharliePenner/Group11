@@ -29,12 +29,15 @@ def create_user_recipe_table(conn):
     try:
         cursor = conn.cursor()
         cursor.execute("""CREATE TABLE IF NOT EXISTS user_recipes (
-                            recipe_id integer PRIMARY KEY,
+                            recipe_name text PRIMARY KEY,
                             username text NOT NULL,
-                            recipe_name text NOT NULL,
-                            recipe_description text NOT NULL,
                             recipe_ingredients text NOT NULL,
                             recipe_instructions text NOT NULL,
+                            recipe_servings integer NOT NULL,
+                            recipe_calories integer NOT NULL,
+                            recipe_protein integer NOT NULL,
+                            recipe_fat integer NOT NULL,
+                            recipe_carbs integer NOT NULL,
                             FOREIGN KEY (username) REFERENCES users (username)
                         );""")
     except sqlite3.Error as e:

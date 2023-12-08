@@ -1,16 +1,17 @@
 <html>
    <body>
       
-      <form action = "{{ url_for('addRecipe') }}" method = "POST">
+      <form action = "{{ url_for('addRecipe', username = username) }}" method = "POST">
          <h3>Add Your Own Recipe!</h3>
-         Username:
-         <input type = "text" name = "Username" ></br>
 
-         RecipeName:
+         Recipe Name:
          <input type = "text"  name = "Recipe Name" ><br>
          
-         <label for="ingredients">Ingredients:</label><br>
-         <textarea id="ingredients" name="ingredients" rows="4" cols="50"></textarea><br>
+         <label for="Ingredients">Ingredients:</label><br>
+         <textarea id="Ingredients" name="Ingredients" rows="4" cols="50"></textarea><br>
+
+         <label for="Instructions">Instructions:</label><br>
+         <textarea id="Instructions" name="Instructions" rows="4" cols="50"></textarea><br>
          
          Servings:
          <input type = "int" name = "Servings" /><br>
