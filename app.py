@@ -5,14 +5,11 @@ from datetime import datetime
 from password_hashing import hash_password
 from Users import login, registerUser, create_connection, create_table, create_user_recipe_table
 import sqlite3 as sql
-from RecipeAPI import RecipeAPI
-
-recipe_api = RecipeAPI()
 
 # set up the Flask object using the constructor
 app = Flask(__name__)
 
-#initialize source venv/bin/activatethe database
+#initialize the database
 database = "users.db"
 con = create_connection(database)
 if con is not None:
@@ -46,24 +43,31 @@ def handle_login_request():
 
         if success:
             if user[0] == 'admin':
-                # Fetch user data for the admin
                 cursor = con.cursor()
                 cursor.execute("SELECT * FROM users")
                 users = cursor.fetchall()
-                #print out all the users
-                return render_template("user_page.html", username=user[0], name=user[2], users = users)
+
+                # Fetch user recipes for the admin
+                cursor.execute("SELECT * FROM user_recipes")
+                user_recipes = cursor.fetchall()
+
+                return render_template("user_page.html", username=user[0], name=user[2], users=users, user_recipes=user_recipes)
             else:
-                return render_template("user_page.html", username=user[0], name=user[2], add_recipe_url= url_for('addRecipe', username=user[0]))
+                # Fetch recipes for regular user
+                cursor = con.cursor()
+                cursor.execute("SELECT * FROM user_recipes WHERE username=?", (username,))
+                user_recipes = cursor.fetchall()
+
+                return render_template("user_page.html", username=user[0], name=user[2], add_recipe_url=url_for('addRecipe', username=user[0]), user_recipes=user_recipes)
         else:
             return render_template("login.html", error="Invalid username or password")
-              
     except Exception as e:
-        # Log the exception for debugging purposes
         print(f"Error: {str(e)}")
         con.rollback()
         return render_template("login.html", error="An error occurred during login")
     finally:
         con.close()
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -89,13 +93,6 @@ def handle_register_request():
         return render_template("registerUser.html", error="An error occurred during registration")
     finally:
         con.close()
-
-
-@app.route('/search', methods=['POST'])
-def search_recipes():
-    query = request.form['Ingredient']
-    recipes = list(recipe_api.recipe_search(query))
-    return render_template('search_results.html', recipes=recipes)
 
 @app.route('/addRecipe', methods=['GET', 'POST'])
 def addRecipe():
@@ -135,4 +132,3 @@ def handle_add_recipe_request(username):
 
 if __name__ == '__main__':
     app.run(debug = True)
-
