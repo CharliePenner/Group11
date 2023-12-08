@@ -24,6 +24,25 @@ def create_table(conn):
     except sqlite3.Error as e:
         print(e)
 
+def create_user_recipe_table(conn):
+    """Create a table for the user's recipes."""
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS user_recipes (
+                            recipe_name text PRIMARY KEY,
+                            username text NOT NULL,
+                            recipe_ingredients text NOT NULL,
+                            recipe_instructions text NOT NULL,
+                            recipe_servings integer NOT NULL,
+                            recipe_calories integer NOT NULL,
+                            recipe_protein integer NOT NULL,
+                            recipe_fat integer NOT NULL,
+                            recipe_carbs integer NOT NULL,
+                            FOREIGN KEY (username) REFERENCES users (username)
+                        );""")
+    except sqlite3.Error as e:
+        print(e)
+
 def registerUser(conn, username, password, name, age, height):
     """Register a new user."""
     hashed_password = hash_password(password)
