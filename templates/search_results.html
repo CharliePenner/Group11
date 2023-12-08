@@ -13,6 +13,7 @@
             <li>
                 <strong>{{ recipe.label }}</strong><br>
                 <a href="{{ recipe.url }}">View Recipe</a><br>
+                Servings: {{ recipe.yields }}<br>
                 Total Calories: {{ recipe.calories }}<br>
                 Ingredients: {{ recipe.ingredients|join(', ') }}
             </li>
