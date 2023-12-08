@@ -11,6 +11,9 @@ import json
 RECIPE_API_ID = "b962138b"
 RECIPE_API_KEY = "7571a72dbf7b452b2f32bd26bc3efccc"
 
+def filter_recipe_keys(data, allowed_keys):
+    return {k: v for k, v in data.items() if k in allowed_keys}
+
 # class for using the Edamam Recipe Search API
 class RecipeAPI:
     def __init__(self):
@@ -25,12 +28,22 @@ class RecipeAPI:
         results = (requests.get(url)).json()
 
         # search results are stored as a dict
-        hits = results["hits"]                          # "hits" are the recipes found in search
+        hits = results["hits"]
+
+        # Define allowed keys based on your Recipe class constructor
+        allowed_keys = ['label', 'uri', 'url', 'shareAs', 'image',
+                        'dietLabels', 'healthLabels', 'yields', 'cautions',
+                        'totalDaily', 'totalWeight', 'calories', 'totalTime',
+                        'totalNutrients', 'digest', 'ingredients',
+                        'source', 'ingredientLines', 'cuisineType', 
+                        'mealType', 'dishType']
+
         for hit in hits:
-            results = hit["recipe"]
-            results["yields"] = results["yield"]        # "yield" is a keyword in Python, so it must be changed to "yields" for storage
-            results.pop("yield")
-            yield Recipe(**results)                     # creates and returns Recipe object for each search result
+            recipe_data = hit["recipe"]
+            recipe_data["yields"] = recipe_data["yield"]
+            recipe_data.pop("yield")
+            filtered_data = filter_recipe_keys(recipe_data, allowed_keys)
+            yield Recipe(**filtered_data)
 
 # class for storing an individual ingredient found within a recipe, with all the attributes Edamam provides
 class Ingredient:

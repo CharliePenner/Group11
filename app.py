@@ -5,11 +5,14 @@ from datetime import datetime
 from password_hashing import hash_password
 from Users import login, registerUser, create_connection, create_table, create_user_recipe_table
 import sqlite3 as sql
+from RecipeAPI import RecipeAPI
+
+recipe_api = RecipeAPI()
 
 # set up the Flask object using the constructor
 app = Flask(__name__)
 
-#initialize the database
+#initialize source venv/bin/activatethe database
 database = "users.db"
 con = create_connection(database)
 if con is not None:
@@ -87,6 +90,13 @@ def handle_register_request():
     finally:
         con.close()
 
+
+@app.route('/search', methods=['POST'])
+def search_recipes():
+    query = request.form['Ingredient']
+    recipes = list(recipe_api.recipe_search(query))
+    return render_template('search_results.html', recipes=recipes)
+
 @app.route('/addRecipe', methods=['GET', 'POST'])
 def addRecipe():
     username = request.args.get('username', None)
@@ -125,5 +135,4 @@ def handle_add_recipe_request(username):
 
 if __name__ == '__main__':
     app.run(debug = True)
-
 
