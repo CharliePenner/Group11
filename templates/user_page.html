@@ -30,7 +30,8 @@
                 {% endfor %}
             </tbody>
         </table>
-        <h2>User Recipes</h2>
+        {% for user in users %}
+        <h2>{{ user[0] }}'s Recipes</h2>
         <table border="1">
             <thead>
                 <tr>
@@ -43,12 +44,13 @@
                 {% for recipe in user_recipes %}
                     <tr>
                         <td>{{ recipe[0] }}</td>
-                        <td>{{ recipe[2] }}</td>
-                        <td>{{ recipe[3] }}</td>
+                        <td>{{ recipe[4] }}</td>
+                        <td>{{ recipe[5] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+        {% endfor %}
 
     {% else %}
         <div style="text-align: center;">
