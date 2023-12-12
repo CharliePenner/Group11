@@ -11,6 +11,7 @@ recipe_api = RecipeAPI()
 
 # set up the Flask object using the constructor
 app = Flask(__name__)
+app.static_folder = 'static'
 
 #initialize source venv/bin/activatethe database
 database = "users.db"
