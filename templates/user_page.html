@@ -1,9 +1,10 @@
+<!-- user_page.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Success</title>
+    <title>User Page</title>
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
@@ -30,7 +31,73 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% for user in users %}
+            <h2>{{ user[0] }}'s Recipes</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Recipe Name</th>
+                        <th>Ingredients</th>
+                        <th>Instructions</th>
+                        <th>Servings</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Fat</th>
+                        <th>Carbs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recipe in user_recipes %}
+                        {% if recipe[1] == user[0] %}
+                            <tr>
+                                <td>{{ recipe[0] }}</td>
+                                <td>{{ recipe[2] }}</td>
+                                <td>{{ recipe[3] }}</td>
+                                <td>{{ recipe[4] }}</td>
+                                <td>{{ recipe[5] }}</td>
+                                <td>{{ recipe[6] }}</td>
+                                <td>{{ recipe[7] }}</td>
+                                <td>{{ recipe[8] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+
     {% else %}
+        <div style="text-align: center;">
+            <h2>Your Recipes</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Recipe Name</th>
+                        <th>Ingredients</th>
+                        <th>Instructions</th>
+                        <th>Servings</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Fat</th>
+                        <th>Carbs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recipe in user_recipes %}
+                        <tr>
+                            <td>{{ recipe[0] }}</td>
+                            <td>{{ recipe[2] }}</td>
+                            <td>{{ recipe[3] }}</td>
+                            <td>{{ recipe[4] }}</td>
+                            <td>{{ recipe[5] }}</td>
+                            <td>{{ recipe[6] }}</td>
+                            <td>{{ recipe[7] }}</td>
+                            <td>{{ recipe[8] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <h3>Enter Ingredient to Search!</h3>
         <form action="/search" method="post">
             Ingredient:
