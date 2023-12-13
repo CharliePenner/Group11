@@ -96,6 +96,41 @@ def handle_register_request():
     finally:
         con.close()
 
+@app.route('/user_page/<username>')
+def user_page(username):
+    con = create_connection(database)
+
+    try:
+        cursor = con.cursor()
+        cursor.execute("SELECT * FROM user_recipes WHERE username=?", (username,))
+        user_recipes = cursor.fetchall()
+        return render_template('user_page.html', username=username, name=username, user_recipes=user_recipes)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return render_template('user_page.html', username=username, name=username, error="An error occurred while fetching recipes")
+    finally:
+        con.close()
+
+
+@app.route('/delete_recipe/<username>', methods=['POST'])
+def delete_recipe(username):
+    con = create_connection(database)
+
+    try:
+        recipe_name = request.form['recipe_name']
+        cursor = con.cursor()
+        cursor.execute("DELETE FROM user_recipes WHERE username=? AND recipe_name=?", (username, recipe_name))
+        con.commit()
+        print(f"Recipe '{recipe_name}' deleted successfully!")
+        # Redirect back to the user page after deletion
+        return redirect(url_for('user_page', username=username))
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        con.rollback()
+        return render_template('user_page.html', username=username, name=username, error="An error occurred during recipe deletion")
+    finally:
+        con.close()
+
 
 @app.route('/search', methods=['POST'])
 def search_recipes():
