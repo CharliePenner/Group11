@@ -1,0 +1,97 @@
+﻿<!-- edit_recipe.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <title>Edit Recipe</title>
+    <style>
+        input[type="text"] {
+            font-size: 16px
+        }
+        input[type="number"] {
+            font-size: 16px;
+        }
+        textarea {
+            width: 98%;
+        }
+        .head1 {
+            font-size: 40px;
+            background-color: #8db585;
+            font-weight: bold;
+            text-align: center;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: minmax(auto, 500px) minmax(auto, 500px);
+            grid-column-gap: 5px;
+            grid-row-gap: 5px;
+            padding: 5px;
+            background-color: #d1d1d1;
+        }
+        .grid-item {
+            border: 1px solid #000000;
+            padding: 5px;
+            font-size: 20px;
+            /*text-align: right;*/
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <form action="{{url_for('editRecipe', username=username)}}">
+        <div class="head1">
+            Edit Recipe
+        </div>
+        <div class="grid-container">
+            <div class="grid-item">
+                Recipe Name:
+                <input type="text" name="Recipe Name" required>
+            </div>
+            <div class="grid-item">
+                Number of Servings:
+                <input type="number" name="Servings" value="1">
+            </div>
+            <div class="grid-item">
+                Total Calories:
+                <input type="number" name="Calories">
+            </div>
+            <div class="grid-item">
+                Total Protein (g):
+                <input type="number" name="Protein">
+            </div>
+            <div class="grid-item">
+                Total Fat (g):
+                <input type="number" name="Fat">
+            </div>
+            <div class="grid-item">
+                Total Carbs (g):
+                <input type="number" name="Carbs">
+            </div>
+            <div class="grid-item">
+                <label for="Ingredients">Ingredients:</label><br>
+                <textarea id="Ingredients" name="Ingredients"></textarea>
+                <div style="font-size: 12px">
+                    Type each ingredient on a new line.
+                </div>
+            </div>
+            <div class="grid-item">
+                <label for="Instructions">Instructions:</label><br>
+                <textarea id="Instructions" name="Instructions"></textarea>
+                <div style="font-size: 12px">
+                    Type each instruction step on a new line.
+                </div>
+            </div>
+            <div class="grid-item" style="text-align: center">
+                <input type="submit" value="submit" style="width: 95%; height: 95%">
+            </div>
+            <div class="grid-item" style="font-size: 12px">
+                Submitting a recipe with the same name as an existing recipe will override the existing recipe.
+            </div>
+        </div>
+        <!-- Hidden input field to carry the username information -->
+        <input type="hidden" name="username" value="{{ username }}">
+
+    </form>
+</body>
+</html>
