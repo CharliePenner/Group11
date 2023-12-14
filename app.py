@@ -4,8 +4,10 @@ from flask import Flask, render_template, request, url_for
 from datetime import datetime
 from password_hashing import hash_password
 from Users import login, registerUser, create_connection, create_table, create_user_recipe_table
-import sqlite3 as sql
+from Users import create_connection, create_table, create_daily_calorie_table, add_total_calories_column
+import sqlite3
 from RecipeAPI import RecipeAPI
+from flask import Flask, request, redirect, url_for
 
 recipe_api = RecipeAPI()
 
@@ -18,8 +20,10 @@ database = "users.db"
 con = create_connection(database)
 if con is not None:
     create_table(con)
-    registerUser(con, "admin", "admin", "admin", 20, 1.5)
+    registerUser(con, "admin", "admin", "admin", 20, 1.5, 2000)
     create_user_recipe_table(con)
+    create_daily_calorie_table(con)
+    add_total_calories_column(con)
 con.close()
 
 # Render the homepage if the user lands there
@@ -46,8 +50,19 @@ def handle_login_request():
         success, user = login(con, username, hashed_pass)
 
         if success:
+            cursor = con.cursor()
+
+            # Fetch daily calorie goal
+            cursor.execute("SELECT daily_calorie_goal FROM users WHERE username=?", (username,))
+            result = cursor.fetchone()
+            daily_calorie_goal = result[0] if result else None
+
+            # Fetch total calories consumed today
+            cursor.execute("SELECT SUM(total_calories) FROM daily_calories WHERE username=? AND date=date('now')", (username,))
+            total_calories_result = cursor.fetchone()
+            total_calories_consumed = total_calories_result[0] if total_calories_result and total_calories_result[0] is not None else 0
+            
             if user[0] == 'admin':
-                cursor = con.cursor()
                 cursor.execute("SELECT * FROM users")
                 users = cursor.fetchall()
 
@@ -55,14 +70,13 @@ def handle_login_request():
                 cursor.execute("SELECT * FROM user_recipes")
                 user_recipes = cursor.fetchall()
 
-                return render_template("user_page.html", username=user[0], name=user[2], users=users, user_recipes=user_recipes)
+                return render_template("user_page.html", username=user[0], name=user[2], users=users, user_recipes=user_recipes, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed)
             else:
                 # Fetch recipes for regular user
-                cursor = con.cursor()
                 cursor.execute("SELECT * FROM user_recipes WHERE username=?", (username,))
                 user_recipes = cursor.fetchall()
 
-                return render_template("user_page.html", username=user[0], name=user[2], add_recipe_url=url_for('addRecipe', username=user[0]), user_recipes=user_recipes)
+                return render_template("user_page.html", username=user[0], name=user[2], add_recipe_url=url_for('addRecipe', username=user[0]), user_recipes=user_recipes, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed)
         else:
             return render_template("login.html", error="Invalid username or password")
     except Exception as e:
@@ -72,12 +86,13 @@ def handle_login_request():
     finally:
         con.close()
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         return handle_register_request()
     
-    return render_template('registerUser.html')
+    return render_template('login.html')
 
 def handle_register_request():
     con = create_connection(database)
@@ -88,29 +103,57 @@ def handle_register_request():
         name = request.form['Name']
         age = request.form['Age']
         height = request.form['Height']
-        registerUser(con, username, password, name, age, height)
+        daily_calorie_goal = request.form['DailyCalorieGoal']  # Retrieve the daily calorie goal from the form
+        registerUser(con, username, password, name, age, height, daily_calorie_goal)  # Include the calorie goal in the function call
         return render_template('index.html')
     except Exception as e:  
         print(f"Error: {str(e)}")
         con.rollback()
-        return render_template("registerUser.html", error="An error occurred during registration")
+        return render_template("login.html", error="An error occurred during registration")
     finally:
         con.close()
 
 @app.route('/user_page/<username>')
 def user_page(username):
     con = create_connection(database)
-
     try:
         cursor = con.cursor()
+
+        # Query for daily calorie goal
+        cursor.execute("SELECT daily_calorie_goal FROM users WHERE username=?", (username,))
+        result = cursor.fetchone()
+        daily_calorie_goal = result[0] if result else 2000  # Default to 2000 if not set
+
+        # Query for total calories consumed today
+        cursor.execute("SELECT SUM(total_calories) FROM daily_calories WHERE username=? AND date=date('now')", (username,))
+        result = cursor.fetchone()
+        total_calories_consumed = result[0] if result and result[0] is not None else 0
+
+        # Query for user recipes
         cursor.execute("SELECT * FROM user_recipes WHERE username=?", (username,))
         user_recipes = cursor.fetchall()
-        return render_template('user_page.html', username=username, name=username, user_recipes=user_recipes)
+
+        # For admin, additionally fetch all users' data
+        users = []
+        if username == 'admin':
+            cursor.execute("SELECT * FROM users")
+            users = cursor.fetchall()
+
+            # Fetch all user recipes for the admin
+            cursor.execute("SELECT * FROM user_recipes")
+            all_user_recipes = cursor.fetchall()
+            return render_template('user_page.html', username=username, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes, users=users, all_user_recipes=all_user_recipes)
+        
+        # For regular users
+        return render_template('user_page.html', username=username, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes)
+
     except Exception as e:
         print(f"Error: {str(e)}")
-        return render_template('user_page.html', username=username, name=username, error="An error occurred while fetching recipes")
+        # Display an error message on the user page
+        return render_template('user_page.html', username=username, error="An error occurred while fetching user data")
     finally:
         con.close()
+
 
 
 @app.route('/delete_recipe/<username>', methods=['POST'])
@@ -131,6 +174,45 @@ def delete_recipe(username):
         return render_template('user_page.html', username=username, name=username, error="An error occurred during recipe deletion")
     finally:
         con.close()
+
+
+@app.route('/add_recipe_to_daily_calories', methods=['POST'])
+def add_recipe_to_daily_calories():
+    print("Entered /add_recipe_to_daily_calories route")
+    username = request.form['username']
+    recipe_name = request.form['recipe_name']
+    calories = int(request.form['calories'])
+
+    # Connect to the database
+    conn = create_connection('users.db')  # Replace with your database file
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+
+            # Check if there's an entry for the user for today
+            cursor.execute("SELECT total_calories FROM daily_calories WHERE username = ? AND date = date('now')", (username,))
+            result = cursor.fetchone()
+
+            if result:
+                # Update the existing entry
+                new_total = result[0] + calories
+                print(f"Updating total calories for {username} to {new_total}")
+                cursor.execute("UPDATE daily_calories SET total_calories = ? WHERE username = ? AND date = date('now')", (new_total, username))
+            else:
+                print(f"Inserting new total calories for {username}: {calories}")
+                # Create a new entry for today
+                cursor.execute("INSERT INTO daily_calories (username, date, total_calories) VALUES (?, date('now'), ?)", (username, calories))
+
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+            return "An error occurred.", 500
+        finally:
+            conn.close()
+    else:
+        return "Failed to connect to the database.", 500
+
+    return redirect(url_for('user_page', username=username))  # Redirect back to the user page
 
 
 @app.route('/search', methods=['POST'])
