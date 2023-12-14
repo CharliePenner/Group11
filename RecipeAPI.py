@@ -42,6 +42,7 @@ class RecipeAPI:
             recipe_data = hit["recipe"]
             recipe_data["yields"] = recipe_data["yield"]
             recipe_data.pop("yield")
+            recipe_data["calories"] = round(recipe_data["calories"])
             filtered_data = filter_recipe_keys(recipe_data, allowed_keys)
             yield Recipe(**filtered_data)
 
