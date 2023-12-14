@@ -3,47 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!--<link rel="stylesheet" href="styles.css"> --><!-- Link to your external CSS file, if applicable -->
+  <link rel="stylesheet" href="../static/css/loginstyles.css">
   <title>Login Page</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      flex-direction: column;
-    }
-    h1 
-    {
-      text-align: center;
-      font-size: 50px;
-    }
-
-    form
-    {
-      text-align: center;
-      font-size: 25px;
-    }
-    </style>
-
-
 </head>
 <body>
     <h1>Login</h1>
-  <!-- Your form code goes here -->
-  <form action="{{ url_for('loginPage') }}" method="POST">
-    Username:
-     <input type="text" name="Username"><br>
-    Password:
-     <input type="password" name="Password"><br>
 
-    <input type="submit" value="Submit"> 
-  </form>
+    <div class="form-container">
+      <form class="login-form" action="{{ url_for('loginPage') }}" method="POST">
+          <input type="text" placeholder="username" name="Username" />
+          <input type="password" placeholder="password" name="Password" />
+          <button type="submit">login</button>
+          <p class="message">Not registered? <a href="#" class="toggle-form">Create an account</a></p>
+      </form>
 
-  <p><a href="/register">Sign Up!</a></p>
+      <form class="register-form" action="{{ url_for('register') }}" method="POST">
+          <input type="text" placeholder="username" name="Username" />
+          <input type="password" placeholder="password" name="Password" />
+          <input type="text" placeholder="name" name="Name" />
+          <input type="text" placeholder="age" name="Age" />
+          <input type="text" placeholder="height" name="Height" />
+          <button type="submit">create</button>
+          <p class="message">Already registered? <a href="#" class="toggle-form">Sign In</a></p>
+      </form>
+  </div>
 
-  <!-- Additional content or scripts can go here -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+      $(document).ready(function(){
+          $('.toggle-form').click(function(){
+              $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+          });
+      });
+  </script>
 
 </body>
 </html>
