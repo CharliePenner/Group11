@@ -6,6 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Page</title>
     <script>
+        function addRecipeToDailyCalories(username, recipeName, calories) {
+            if (confirm("Add this recipe to your daily calorie intake?")) {
+                fetch(`/add_recipe_to_daily_calories`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `username=${encodeURIComponent(username)}&recipe_name=${encodeURIComponent(recipeName)}&calories=${encodeURIComponent(calories)}`,
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Reload the page after successful addition
+                        window.location.reload();
+                    } else {
+                        console.error('Failed to add recipe to daily calories');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
         function deleteRecipe(username, recipeName) {
             if (confirm("Are you sure you want to delete this recipe?")) {
                 fetch(`/delete_recipe/${username}`, {
@@ -30,6 +50,9 @@
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
+
+    <p>Daily Calorie Goal: {{ daily_calorie_goal }}</p>
+    <p>Total Calories Consumed Today: {{ total_calories_consumed }}</p>    
 
     {% if username == 'admin' %}
         <h2>Users Table</h2>
@@ -83,6 +106,7 @@
                                 <td>{{ recipe[7] }}</td>
                                 <td>{{ recipe[8] }}</td>
                                 <td>
+                                    <button onclick="addRecipeToDailyCalories('{{ username }}', '{{ recipe[0] }}', '{{ recipe[5] }}')">Add to Daily Intake</button>
                                     <button onclick="deleteRecipe('{{ user[0] }}', '{{ recipe[0] }}')">Delete</button>
                                 </td>
                             </tr>
@@ -121,6 +145,7 @@
                             <td>{{ recipe[7] }}</td>
                             <td>{{ recipe[8] }}</td>
                             <td>
+                                <button onclick="addRecipeToDailyCalories('{{ username }}', '{{ recipe[0] }}', '{{ recipe[5] }}')">Add to Daily Intake</button>
                                 <button onclick="deleteRecipe('{{ username }}', '{{ recipe[0] }}')">Delete</button>
                             </td>
                         </tr>
@@ -132,6 +157,7 @@
         <form action="/search" method="post">
             Ingredient:
             <input type="text" name="Ingredient"></br>
+            <input type="hidden" name="username" value="{{ username }}">
             <input type="submit" value="Search">
         </form>
         <p><a href="{{ add_recipe_url }}">Add a Recipe!</a></p>
@@ -141,3 +167,4 @@
 
 </body>
 </html>
+
