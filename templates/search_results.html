@@ -15,7 +15,15 @@
                 <a href="{{ recipe.url }}">View Recipe</a><br>
                 Servings: {{ recipe.yields }}<br>
                 Total Calories: {{ recipe.calories }}<br>
-                Ingredients: {{ recipe.ingredients|join(', ') }}
+                Ingredients: {{ recipe.ingredients|join(', ') }}<br>
+                <!-- Add Recipe Form -->
+                <form action="{{ url_for('add_external_recipe', username=username) }}" method="post">
+                    <input type="hidden" name="Recipe Name" value="{{ recipe.label }}">
+                    <input type="hidden" name="Ingredients" value="{{ recipe.ingredients|join(', ') }}">
+                    <input type="hidden" name="Calories" value="{{ recipe.calories }}">
+                    <input type="hidden" name="username" value="{{ username }}">
+                    <button type="submit">Add to My Recipes</button>
+                </form>
             </li>
         {% endfor %}
     </ul>
