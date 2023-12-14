@@ -135,7 +135,7 @@ def delete_recipe(username):
 
 @app.route('/search', methods=['POST'])
 def search_recipes():
-    query = request.form['Ingredient']
+    query = request.form['SearchQuery']
     recipes = list(recipe_api.recipe_search(query))
     return render_template('search_results.html', recipes=recipes)
 
