@@ -12,7 +12,7 @@
       <form action="{{ url_for('addRecipe', username=username) }}" method="POST">
 
          Recipe Name:
-         <input type="text" name="Recipe Name"><br>
+         <input type="text" name="Recipe Name" required><br>
          
          <label for="Ingredients">Ingredients:</label><br>
          <textarea id="Ingredients" name="Ingredients" rows="4" cols="50"></textarea><br>
@@ -20,20 +20,20 @@
          <label for="Instructions">Instructions:</label><br>
          <textarea id="Instructions" name="Instructions" rows="4" cols="50"></textarea><br>
          
-         Servings:
-         <input type="int" name="Servings"><br>
+         Number of Servings:
+         <input type="number" min="0" step="0.25" name="Servings"><br>
 
-         Calories:
-         <input type="int" name="Calories"><br>
+         Total Calories:
+         <input type="number" min="0" step="1" name="Calories"><br>
 
-         Protein:
-         <input type="int" name="Protein"><br>
+         Total Protein (g):
+         <input type="number" min="0" step="0.1" name="Protein"><br>
 
-         Fat: 
-         <input type="int" name="Fat"><br>
+         Total Fat (g): 
+         <input type="number" min="0" step="0.1" name="Fat"><br>
 
-         Carbs:
-         <input type="int" name="Carbs"><br>
+         Total Carbs (g):
+         <input type="number" min="0" step="0.1" name="Carbs"><br>
 
          <!-- Hidden input field to carry the username information -->
          <input type="hidden" name="username" value="{{ username }}">
