@@ -148,6 +148,7 @@
                             <td>
                                 <button onclick="addRecipeToDailyCalories('{{ username }}', '{{ recipe[0] }}', '{{ recipe[5] }}')">Add to Daily Intake</button>
                                 <button onclick="deleteRecipe('{{ username }}', '{{ recipe[0] }}')">Delete</button>
+                                <a href="{{ url_for('editRecipe', username=username, targetName=recipe[0], targetIngredients=recipe[2], targetInstructions=recipe[3], targetServings=recipe[4], targetCalories=recipe[5], targetProtein=recipe[6], targetFat=recipe[7], targetCarbs=recipe[8]) }}">Edit Recipe</a>
                             </td>
                         </tr>
                     {% endfor %}
