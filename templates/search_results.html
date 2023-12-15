@@ -14,14 +14,23 @@
             <li>
                 <strong>{{ recipe.label }}</strong><br>
                 <a href="{{ recipe.url }}">View Recipe</a><br>
+                Ingredients: {{ recipe.ingredients|join(', ') }}<br>
+                Instructions: {{ recipe.instructionLines|join(' ') }}<br>
                 Servings: {{ recipe.yields }}<br>
                 Total Calories: {{ recipe.calories }}<br>
-                Ingredients: {{ recipe.ingredients|join(', ') }}<br>
+                Total Protein (g): {{ recipe.totalNutrients[10].quantity }}<br>
+                Total Fat (g): {{ recipe.totalNutrients[1].quantity }}<br>
+                Total Protein (g): {{ recipe.totalNutrients[6].quantity }}<br>
                 <!-- Add Recipe Form -->
                 <form action="{{ url_for('add_external_recipe', username=username) }}" method="post">
                     <input type="hidden" name="Recipe Name" value="{{ recipe.label }}">
-                    <input type="hidden" name="Ingredients" value="{{ recipe.ingredients|join(', ') }}">
+                    <input type="hidden" name="Ingredients" value="{{ recipe.ingredients|join('\n') }}">
+                    <input type="hidden" name="Instructions" value="{{ recipe.instructionLines|join('\n') }}">
+                    <input type="hidden" name="Servings" value="{{ recipe.yields }}">
                     <input type="hidden" name="Calories" value="{{ recipe.calories }}">
+                    <input type="hidden" name="Protein" value="{{ recipe.totalNutrients[10].quantity }}">
+                    <input type="hidden" name="Fat" value="{{ recipe.totalNutrients[1].quantity }}">
+                    <input type="hidden" name="Carbs" value="{{ recipe.totalNutrients[6].quantity }}">
                     <input type="hidden" name="username" value="{{ username }}">
                     <button type="submit">Add to My Recipes</button>
                 </form>
