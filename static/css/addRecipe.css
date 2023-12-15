@@ -79,11 +79,11 @@ h1 {
 }
 
 .form__label {
-    font-size: 14px; /* Adjust the font size as needed */
-    color: #4CAF50; /* Adjust the label color as needed */
+    font-size: 14px; 
+    color: #4CAF50; 
     display: block;
-    text-align: left; /* Adjust the text alignment as needed */
-    margin-bottom: 5px; /* Adjust the margin as needed */
+    text-align: left; 
+    margin-bottom: 5px; 
 }
 
 .form__textarea {
@@ -104,9 +104,9 @@ h2 {
 }
 
 a {
-    color: #000000; /* Adjust the link color as needed */ /* Remove underlines from links */
+    color: #000000; 
 }
 
 a:hover {
-    color: #a6c9a8; /* Adjust the link color on hover */
+    color: #a6c9a8;
 }
