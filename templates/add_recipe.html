@@ -3,42 +3,45 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="../static/css/addRecipe.css">
    <title>Add Recipe</title>
 </head>
 <body>
-   <form action="{{ url_for('addRecipe', username=username) }}" method="POST">
-      <h3>Add Your Own Recipe!</h3>
+   <div class="form-container">
+      <h2>Add Your Own Recipe!</h2>
+      <form action="{{ url_for('addRecipe', username=username) }}" method="POST">
 
-      Recipe Name:
-      <input type="text" name="Recipe Name"><br>
-      
-      <label for="Ingredients">Ingredients:</label><br>
-      <textarea id="Ingredients" name="Ingredients" rows="4" cols="50"></textarea><br>
+         Recipe Name:
+         <input type="text" name="Recipe Name"><br>
+         
+         <label for="Ingredients">Ingredients:</label><br>
+         <textarea id="Ingredients" name="Ingredients" rows="4" cols="50"></textarea><br>
 
-      <label for="Instructions">Instructions:</label><br>
-      <textarea id="Instructions" name="Instructions" rows="4" cols="50"></textarea><br>
-      
-      Servings:
-      <input type="int" name="Servings"><br>
+         <label for="Instructions">Instructions:</label><br>
+         <textarea id="Instructions" name="Instructions" rows="4" cols="50"></textarea><br>
+         
+         Servings:
+         <input type="int" name="Servings"><br>
 
-      Calories:
-      <input type="int" name="Calories"><br>
+         Calories:
+         <input type="int" name="Calories"><br>
 
-      Protein:
-      <input type="int" name="Protein"><br>
+         Protein:
+         <input type="int" name="Protein"><br>
 
-      Fat: 
-      <input type="int" name="Fat"><br>
+         Fat: 
+         <input type="int" name="Fat"><br>
 
-      Carbs:
-      <input type="int" name="Carbs"><br>
+         Carbs:
+         <input type="int" name="Carbs"><br>
 
-      <!-- Hidden input field to carry the username information -->
-      <input type="hidden" name="username" value="{{ username }}">
+         <!-- Hidden input field to carry the username information -->
+         <input type="hidden" name="username" value="{{ username }}">
 
-      <input type="submit" value="submit"><br>
-      
-      <a href="{{ url_for('user_page', username=username) }}">Back to User Page</a>
-   </form>
+         <button type="submit">Add</button>
+         <br>
+         <a href="{{ url_for('user_page', username=username) }}">Back to User Page</a>
+      </form>
+   </div>
 </body>
 </html>

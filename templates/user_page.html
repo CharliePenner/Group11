@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/loginstyles.css">
     <title>User Page</title>
     <script>
         function deleteRecipe(username, recipeName) {
@@ -134,7 +135,7 @@
             <input type="text" name="Ingredient"></br>
             <input type="submit" value="Search">
         </form>
-        <p><a href="{{ add_recipe_url }}">Add a Recipe!</a></p>
+        <p><a href="{{ url_for('addRecipe', username=username) }}">Add a Recipe!</a></p>
     {% endif %}
 
     <p><a href="/">Go Home</a></p>
