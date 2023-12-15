@@ -36,7 +36,7 @@ class RecipeAPI:
                         'totalDaily', 'totalWeight', 'calories', 'totalTime',
                         'totalNutrients', 'digest', 'ingredients',
                         'source', 'ingredientLines', 'cuisineType', 
-                        'mealType', 'dishType']
+                        'mealType', 'dishType', 'instructionLines']
 
         for hit in hits:
             recipe_data = hit["recipe"]
@@ -74,7 +74,7 @@ class Nutrient:
     def __init__(self, tag, label=None, quantity=0, unit=None):
         self.tag = tag
         self.label = label or tag
-        self.quantity = quantity
+        self.quantity = round(quantity, 1)
         self.unit = unit
 
     def __repr__(self):
@@ -110,7 +110,8 @@ class Recipe:
                  ingredientLines=None,
                  cuisineType=None,
                  mealType=None,
-                 dishType=None):
+                 dishType=None,
+                 instructionLines=None):
         self.ingredientLines = ingredientLines or []        # simple ingredient text
         self.ingredients = []                               # complex ingredient object
         if isinstance(ingredients, list):
@@ -130,6 +131,8 @@ class Recipe:
         self.shareAs = shareAs or self.url                  # url to recipe on Edamam
         self.yields = yields                                # number of servings
         self.cautions = cautions                            # hidden allergen warnings
+        self.instructionLines = instructionLines \
+            or ["No instructions provided."]                # steps for making the recipe, stored as a list of strings
         self.totalDaily = []
         if isinstance(totalDaily, dict):
             for n in totalDaily:                            # copies nutrient daily values to list of Nutrient objects
@@ -138,7 +141,7 @@ class Recipe:
         else:
             self.totalDaily = totalDaily or []
         self.totalWeight = totalWeight
-        self.calories = calories
+        self.calories = round(calories)
         self.totalTime = totalTime
         self.totalNutrients = []
         if isinstance(totalNutrients, dict):
@@ -157,19 +160,3 @@ class Recipe:
 
     def __str__(self):
         return self.label
-
-#TESTING
-if __name__ == "__main__":
-    e = RecipeAPI()
-    query = input("Recipe Search: ")
-    for recipe in e.recipe_search(query):
-        print("\n")
-        print(recipe)
-        print("Total calories: ", recipe.calories)
-        print(recipe.url)
-        print("Ingredients:")
-        for i in recipe.ingredients:
-            print("\t", i)
-        print("Nutrients (Total):")
-        for n in recipe.totalNutrients:
-            print("\t", n)
