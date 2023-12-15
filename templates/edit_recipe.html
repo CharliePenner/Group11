@@ -1,97 +1,51 @@
-﻿<!-- edit_recipe.html -->
+<!-- edit_recipe.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/addRecipe.css">
     <title>Edit Recipe</title>
-    <style>
-        input[type="text"] {
-            font-size: 16px
-        }
-        input[type="number"] {
-            font-size: 16px;
-        }
-        textarea {
-            width: 98%;
-        }
-        .head1 {
-            font-size: 40px;
-            background-color: #8db585;
-            font-weight: bold;
-            text-align: center;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: minmax(auto, 500px) minmax(auto, 500px);
-            grid-column-gap: 5px;
-            grid-row-gap: 5px;
-            padding: 5px;
-            background-color: #d1d1d1;
-        }
-        .grid-item {
-            border: 1px solid #000000;
-            padding: 5px;
-            font-size: 20px;
-            /*text-align: right;*/
-            background-color: #ffffff;
-        }
-    </style>
 </head>
 <body>
-    <form action="{{url_for('editRecipe', username=username)}}">
-        <div class="head1">
-            Edit Recipe
-        </div>
-        <div class="grid-container">
-            <div class="grid-item">
-                Recipe Name:
-                <input type="text" name="Recipe Name" required>
-            </div>
-            <div class="grid-item">
-                Number of Servings:
-                <input type="number" name="Servings" value="1">
-            </div>
-            <div class="grid-item">
-                Total Calories:
-                <input type="number" name="Calories">
-            </div>
-            <div class="grid-item">
-                Total Protein (g):
-                <input type="number" name="Protein">
-            </div>
-            <div class="grid-item">
-                Total Fat (g):
-                <input type="number" name="Fat">
-            </div>
-            <div class="grid-item">
-                Total Carbs (g):
-                <input type="number" name="Carbs">
-            </div>
-            <div class="grid-item">
-                <label for="Ingredients">Ingredients:</label><br>
-                <textarea id="Ingredients" name="Ingredients"></textarea>
-                <div style="font-size: 12px">
-                    Type each ingredient on a new line.
-                </div>
-            </div>
-            <div class="grid-item">
-                <label for="Instructions">Instructions:</label><br>
-                <textarea id="Instructions" name="Instructions"></textarea>
-                <div style="font-size: 12px">
-                    Type each instruction step on a new line.
-                </div>
-            </div>
-            <div class="grid-item" style="text-align: center">
-                <input type="submit" value="submit" style="width: 95%; height: 95%">
-            </div>
-            <div class="grid-item" style="font-size: 12px">
-                Submitting a recipe with the same name as an existing recipe will override the existing recipe.
-            </div>
-        </div>
-        <!-- Hidden input field to carry the username information -->
-        <input type="hidden" name="username" value="{{ username }}">
+    <div class="form-container">
+        <h2>Edit an Existing Recipe</h2>
+        <form action="{{ url_for('editRecipe', username=username) }}" method="POST">
 
-    </form>
+            Recipe Name:
+            <input type="text" name="Recipe Name" value="{{ targetName }}" required><br>
+
+            <label for="Ingredients">Ingredients:</label><br>
+            <textarea id="Ingredients" name="Ingredients" rows="4" cols="50">{{ targetIngredients }}</textarea><br>
+
+            <label for="Instructions">Instructions:</label><br>
+            <textarea id="Instructions" name="Instructions" rows="4" cols="50">{{ targetInstructions }}</textarea><br>
+
+            Number of Servings:
+            <input type="number" min="0" step="0.25" name="Servings" value="{{ targetServings }}"><br>
+
+            Total Calories:
+            <input type="number" min="0" step="1" name="Calories" value="{{ targetCalories }}"><br>
+
+            Total Protein (g):
+            <input type="number" min="0" step="0.1" name="Protein" value="{{ targetProtein }}"><br>
+
+            Total Fat (g):
+            <input type="number" min="0" step="0.1" name="Fat" value="{{ targetFat }}"><br>
+
+            Total Carbs (g):
+            <input type="number" min="0" step="0.1" name="Carbs" value="{{ targetCarbs }}"><br>
+
+            <!-- Hidden input field to carry the username information -->
+            <input type="hidden" name="username" value="{{ username }}">
+
+            <!-- Hidden input field to carry the edited recipe's original name -->
+            <input type="hidden" name="targetName" value="{{ targetName }}">
+
+            <button type="submit">Edit</button>
+            <br>
+            <a href="{{ url_for('user_page', username=username) }}">Back to User Page</a>
+        </form>
+    </div>
 </body>
 </html>
