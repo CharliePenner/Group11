@@ -42,9 +42,9 @@
             <!-- Hidden input field to carry the edited recipe's original name -->
             <input type="hidden" name="targetName" value="{{ targetName }}">
 
-            <button type="submit">Edit</button>
+            <button type="submit">Save Changes</button>
             <br>
-            <a href="{{ url_for('user_page', username=username) }}">Back to User Page</a>
+            <a href="{{ url_for('user_page', username=username) }}">Cancel</a>
         </form>
     </div>
 </body>
