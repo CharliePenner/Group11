@@ -43,6 +43,6 @@
             </li>
         {% endfor %}
     </ul>
-    <p><a href="/">Go Home</a></p>
+    <a href="{{ url_for('user_page', username=username) }}">Back to User Page</a>
 </body>
 </html>
