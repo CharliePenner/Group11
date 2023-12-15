@@ -11,15 +11,16 @@ def create_connection(db_file):
     return None
 
 def create_table(conn):
-    """Create a table for the users."""
+    """Create a table for the users, including the daily calorie goal."""
     try:
         cursor = conn.cursor()
         cursor.execute("""CREATE TABLE IF NOT EXISTS users (
-                            username text PRIMARY KEY,
-                            password text NOT NULL,
-                            name text NOT NULL,
-                            age integer NOT NULL,
-                            height real NOT NULL
+                            username TEXT PRIMARY KEY,
+                            password TEXT NOT NULL,
+                            name TEXT NOT NULL,
+                            age INTEGER NOT NULL,
+                            height REAL NOT NULL,
+                            daily_calorie_goal INTEGER DEFAULT 2000
                         );""")
     except sqlite3.Error as e:
         print(e)
@@ -29,27 +30,52 @@ def create_user_recipe_table(conn):
     try:
         cursor = conn.cursor()
         cursor.execute("""CREATE TABLE IF NOT EXISTS user_recipes (
-                            recipe_name text PRIMARY KEY,
-                            username text NOT NULL,
-                            recipe_ingredients text NOT NULL,
-                            recipe_instructions text NOT NULL,
-                            recipe_servings integer NOT NULL,
-                            recipe_calories integer NOT NULL,
-                            recipe_protein integer NOT NULL,
-                            recipe_fat integer NOT NULL,
-                            recipe_carbs integer NOT NULL,
+                            recipe_name TEXT PRIMARY KEY,
+                            username TEXT NOT NULL,
+                            recipe_ingredients TEXT NOT NULL,
+                            recipe_instructions TEXT NOT NULL,
+                            recipe_servings INTEGER NOT NULL,
+                            recipe_calories INTEGER NOT NULL,
+                            recipe_protein INTEGER NOT NULL,
+                            recipe_fat INTEGER NOT NULL,
+                            recipe_carbs INTEGER NOT NULL,
                             FOREIGN KEY (username) REFERENCES users (username)
                         );""")
     except sqlite3.Error as e:
         print(e)
 
-def registerUser(conn, username, password, name, age, height):
-    """Register a new user."""
+def create_daily_calorie_table(conn):
+    """Create a table for tracking daily calorie intake."""
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS daily_calories (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            username TEXT NOT NULL,
+                            date TEXT NOT NULL,
+                            recipe_calories INTEGER DEFAULT 0,
+                            FOREIGN KEY (username) REFERENCES users (username)
+                        );""")
+        conn.commit()
+    except sqlite3.Error as e:
+        print(e)
+
+def add_total_calories_column(conn):
+    """Add the total_calories column to the daily_calories table."""
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""ALTER TABLE daily_calories ADD COLUMN total_calories INTEGER DEFAULT 0""")
+        conn.commit()
+    except sqlite3.Error as e:
+        print(e)
+
+
+def registerUser(conn, username, password, name, age, height, daily_calorie_goal):
+    """Register a new user, including setting their daily calorie goal."""
     hashed_password = hash_password(password)
     try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password, name, age, height) VALUES (?, ?, ?, ?, ?)",
-                       (username, hashed_password, name, age, height))
+        cursor.execute("INSERT INTO users (username, password, name, age, height, daily_calorie_goal) VALUES (?, ?, ?, ?, ?, ?)",
+                       (username, hashed_password, name, age, height, daily_calorie_goal))
         conn.commit()
         print(f"User {username} registered successfully!")
     except sqlite3.IntegrityError:
@@ -70,6 +96,7 @@ def login(conn, username, hashed_password):
     except sqlite3.Error as e:
         print(e)
         return False, None
+
 
 '''def main():
     Main function to handle user inputs.
