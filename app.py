@@ -1,5 +1,4 @@
-"""flask app to perform operations on the movies and reviews table
-     just created """
+# flask app to run Recipes & Fitness tracker
 from flask import Flask, render_template, request, url_for
 from datetime import datetime
 from password_hashing import hash_password
@@ -245,19 +244,17 @@ def add_external_recipe(username):
     try:
         recipe_name = request.form['Recipe Name']
         ingredients = request.form['Ingredients']
+        instructions = request.form['Instructions']
+        servings = request.form['Servings']
         calories = request.form['Calories']
-
-        # Default values for other fields
-        default_servings = 1
-        default_protein = 0
-        default_fat = 0
-        default_carbs = 0
-        default_instructions = "No specific instructions provided."  # Default instructions
+        protein = request.form['Protein']
+        fat = request.form['Fat']
+        carbs = request.form['Carbs']
 
         cursor = con.cursor()
         cursor.execute("""INSERT INTO user_recipes (recipe_name, username, recipe_ingredients, recipe_instructions, recipe_servings, recipe_calories, recipe_protein, recipe_fat, recipe_carbs)
                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                       (recipe_name, username, ingredients, default_instructions, default_servings, calories, default_protein, default_fat, default_carbs))
+                       (recipe_name, username, ingredients, instructions, servings, calories, protein, fat, carbs))
         con.commit()
         return redirect(url_for('user_page', username=username))
     except Exception as e:
@@ -307,6 +304,8 @@ def editRecipe():
     targetProtein = request.args.get('targetProtein', None)
     targetFat = request.args.get('targetFat', None)
     targetCarbs = request.args.get('targetCarbs', None)
+
+
     if request.method == 'POST':
         handle_edit_recipe_request(username)
     return render_template("edit_recipe.html", username = username, targetName = targetName, targetIngredients = targetIngredients, targetInstructions = targetInstructions,
@@ -326,8 +325,8 @@ def handle_edit_recipe_request(username):
         recipe_carbs = request.form["Carbs"]
         targetName = request.form["targetName"]
 
-        recipe_ingredients_str = '\n'.join(recipe_ingredients)
-        recipe_instructions_str = '\n'.join(recipe_instructions)
+        recipe_ingredients_str = ' ; '.join(recipe_ingredients)
+        recipe_instructions_str = ' ; '.join(recipe_instructions)
 
         cursor = con.cursor()
         cursor.execute("UPDATE user_recipes \
