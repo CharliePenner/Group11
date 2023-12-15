@@ -12,10 +12,10 @@
     <ul>
         {% for recipe in recipes %}
             <li>
-                <strong>{{ recipe.label }}</strong><br>
+                <strong style="font-size: 20px">{{ recipe.label }}</strong><br>
                 <a href="{{ recipe.url }}">View Recipe</a><br>
-                Ingredients: {{ recipe.ingredients|join(', ') }}<br>
-                Instructions: {{ recipe.instructionLines|join(' ') }}<br>
+                <b>Ingredients:</b> {{ recipe.ingredients|join(', ') }}<br>
+                <b>Instructions:</b> {{ recipe.instructionLines|join(' ') }}<br>
                 Servings: {{ recipe.yields }}<br>
                 Total Calories: {{ recipe.calories }}<br>
                 Total Protein (g): {{ recipe.totalNutrients[10].quantity }}<br>
