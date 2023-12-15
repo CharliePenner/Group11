@@ -325,8 +325,8 @@ def handle_edit_recipe_request(username):
         recipe_carbs = request.form["Carbs"]
         targetName = request.form["targetName"]
 
-        recipe_ingredients_str = ' ; '.join(recipe_ingredients)
-        recipe_instructions_str = ' ; '.join(recipe_instructions)
+        recipe_ingredients_str = '\n'.join(recipe_ingredients)
+        recipe_instructions_str = '\n'.join(recipe_instructions)
 
         cursor = con.cursor()
         cursor.execute("UPDATE user_recipes \
