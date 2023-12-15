@@ -226,7 +226,7 @@ def add_recipe_to_daily_calories():
 
 @app.route('/search', methods=['POST'])
 def search_recipes():
-    query = request.form['Ingredient']
+    query = request.form['SearchQuery']  # Get the recipe search query from the form
     username = request.form['username']  # Get the username from the form
     recipes = list(recipe_api.recipe_search(query))
     return render_template('search_results.html', recipes=recipes, username=username)

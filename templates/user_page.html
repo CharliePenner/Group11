@@ -153,17 +153,16 @@
                 </tbody>
             </table>
         </div>
-        <h3>Enter Ingredient to Search!</h3>
         <form action="/search" method="post">
-            Ingredient:
-            <input type="text" name="Ingredient"></br>
+            <br><br>Find a Recipe:
+            <input type="text" name="SearchQuery">
             <input type="hidden" name="username" value="{{ username }}">
             <input type="submit" value="Search">
         </form>
         <p><a href="{{ add_recipe_url }}">Add a Recipe!</a></p>
     {% endif %}
 
-    <p><a href="/">Go Home</a></p>
+    <p><a href="/">Log Out</a></p>
 
 </body>
 </html>
