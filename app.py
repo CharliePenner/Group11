@@ -128,6 +128,11 @@ def user_page(username):
         result = cursor.fetchone()
         total_calories_consumed = result[0] if result and result[0] is not None else 0
 
+        # Query for user data, including the name
+        cursor.execute("SELECT name FROM users WHERE username=?", (username,))
+        result = cursor.fetchone()
+        name = result[0] if result else username  # Use the username if the name is not found
+
         # Query for user recipes
         cursor.execute("SELECT * FROM user_recipes WHERE username=?", (username,))
         user_recipes = cursor.fetchall()
@@ -141,19 +146,17 @@ def user_page(username):
             # Fetch all user recipes for the admin
             cursor.execute("SELECT * FROM user_recipes")
             all_user_recipes = cursor.fetchall()
-            return render_template('user_page.html', username=username, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes, users=users, all_user_recipes=all_user_recipes)
+            return render_template('user_page.html', username=username, name=name, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes, users=users, all_user_recipes=all_user_recipes)
         
         # For regular users
-        return render_template('user_page.html', username=username, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes)
+        return render_template('user_page.html', username=username, name=name, daily_calorie_goal=daily_calorie_goal, total_calories_consumed=total_calories_consumed, user_recipes=user_recipes)
 
     except Exception as e:
         print(f"Error: {str(e)}")
         # Display an error message on the user page
-        return render_template('user_page.html', username=username, error="An error occurred while fetching user data")
+        return render_template('user_page.html', username=username, name=username, error="An error occurred while fetching user data")
     finally:
         con.close()
-
-
 
 @app.route('/delete_recipe/<username>', methods=['POST'])
 def delete_recipe(username):
