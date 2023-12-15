@@ -267,8 +267,6 @@ def add_external_recipe(username):
     finally:
         con.close()
 
-
-
 def handle_add_recipe_request(username):
     con = create_connection(database)
 
@@ -295,6 +293,55 @@ def handle_add_recipe_request(username):
         print(f"Error: {str(e)}")
         con.rollback()
         return render_template("add_recipe.html", error="An error occurred during recipe addition")
+    finally:
+        con.close()
+
+@app.route('/editRecipe', methods=['GET', 'POST'])
+def editRecipe():
+    username = request.args.get('username', None)
+    targetName = request.args.get('targetName', None)
+    targetIngredients = request.args.get('targetIngredients', None)
+    targetInstructions = request.args.get('targetInstructions', None)
+    targetServings = request.args.get('targetServings', None)
+    targetCalories = request.args.get('targetCalories', None)
+    targetProtein = request.args.get('targetProtein', None)
+    targetFat = request.args.get('targetFat', None)
+    targetCarbs = request.args.get('targetCarbs', None)
+    if request.method == 'POST':
+        handle_edit_recipe_request(username)
+    return render_template("edit_recipe.html", username = username, targetName = targetName, targetIngredients = targetIngredients, targetInstructions = targetInstructions,
+                            targetServings = targetServings, targetCalories = targetCalories, targetProtein = targetProtein, targetFat = targetFat, targetCarbs = targetCarbs)
+
+def handle_edit_recipe_request(username):
+    con = create_connection(database)
+
+    try:
+        recipe_name = request.form['Recipe Name']
+        recipe_ingredients = request.form['Ingredients'].splitlines()
+        recipe_instructions = request.form['Instructions'].splitlines()
+        recipe_servings = request.form['Servings']
+        recipe_calories = request.form["Calories"]
+        recipe_protein = request.form["Protein"]
+        recipe_fat = request.form["Fat"]
+        recipe_carbs = request.form["Carbs"]
+        targetName = request.form["targetName"]
+
+        recipe_ingredients_str = '\n'.join(recipe_ingredients)
+        recipe_instructions_str = '\n'.join(recipe_instructions)
+
+        cursor = con.cursor()
+        cursor.execute("UPDATE user_recipes \
+                        SET recipe_name = ?, username = ?, recipe_ingredients = ?, recipe_instructions = ?, recipe_servings = ?, \
+                            recipe_calories = ?, recipe_protein = ?, recipe_fat = ?, recipe_carbs = ? \
+                        WHERE recipe_name = ?",
+                        (recipe_name, username,  recipe_ingredients_str, recipe_instructions_str, recipe_servings, recipe_calories, recipe_protein, recipe_fat, recipe_carbs, targetName))
+        con.commit()
+        print(f"Recipe {targetName} edited successfully!")
+        return render_template('user_page.html', username=username, name=username)
+    except Exception as e:  
+        print(f"Error: {str(e)}")
+        con.rollback()
+        return render_template("edit_recipe.html", error="An error occurred during recipe addition")
     finally:
         con.close()
 
